@@ -1,0 +1,71 @@
+<h1 class="text-4xl font-bold text-center">Pizza Deliveries</h1>
+
+<div
+  class="hidden md:flex md:flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border"
+>
+  <%= render "pagination", pizza_deliveries: @pizza_deliveries %>
+
+  <table class="w-full text-left table-auto min-w-max">
+    <thead>
+      <tr>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Location
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Pizza Type
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Size
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Crust
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Action
+          </p>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @pizza_deliveries.each do |pizza_delivery| %>
+        <tr>
+          <td class="p-4 border-b border-blue-gray-50">
+            <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+              <%= pizza_delivery_location(pizza_delivery) %>
+            </p>
+          </td>
+          <td class="p-4 border-b border-blue-gray-50">
+            <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+              <%= pizza_delivery.pizza_type.titleize %>
+            </p>
+          </td>
+          <td class="p-4 border-b border-blue-gray-50">
+            <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+              <%= pizza_delivery.size.titleize %>
+            </p>
+          </td>
+          <td class="p-4 border-b border-blue-gray-50">
+            <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+              <%= pizza_delivery.crust.titleize %>
+            </p>
+          </td>
+          <td class="p-4 border-b border-blue-gray-50">
+            <%= link_to("View", pizza_delivery_path(pizza_delivery.id), class: "block font-sans text-sm antialiased font-medium leading-normal text-blue-400") %>
+            <%= link_to("Edit", edit_pizza_delivery_path(pizza_delivery.id), class: "block font-sans text-sm antialiased font-medium leading-normal text-amber-400") %>
+            <%= link_to("Delete", pizza_delivery_path(pizza_delivery.id), method: :delete, class: "block font-sans text-sm antialiased font-medium leading-normal text-red-400") %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+  <%= render "pagination", pizza_deliveries: @pizza_deliveries %>
+</div>

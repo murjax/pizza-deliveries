@@ -14,6 +14,7 @@ gem 'redis', '>= 4.0.1'
 gem 'bootsnap', require: false
 gem 'dotenv-rails'
 gem 'geocoder'
+gem 'kaminari'
 
 group :development, :test do
   gem 'debug', platforms: %i[ mri windows ]
