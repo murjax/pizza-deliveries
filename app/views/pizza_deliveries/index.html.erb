@@ -1,6 +1,13 @@
 <h1 class="text-4xl font-bold text-center">Pizza Deliveries</h1>
 
 <div
+  data-controller="pizza-deliveries-index-map"
+  data-pizza-deliveries-index-map-google-api-key="<%= ENV['GOOGLE_API_KEY'] %>"
+>
+  <div data-pizza-deliveries-index-map-target="map" style="height:400px"></div>
+</div>
+
+<div
   class="hidden md:flex md:flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border"
 >
   <%= render "pagination", pizza_deliveries: @pizza_deliveries %>
