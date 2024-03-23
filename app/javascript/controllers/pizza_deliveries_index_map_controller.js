@@ -5,6 +5,10 @@ export default class extends Controller {
 
   mapTargetConnected() {
     if (document.getElementById("google-script") === null) {
+      const markerClustererScript = document.createElement("script");
+      markerClustererScript.src = "https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js";
+      document.head.appendChild(markerClustererScript);
+
       const googleApiKey = this.data.get("google-api-key");
       const googleScript = document.createElement("script");
       googleScript.id = "google-script";
@@ -35,7 +39,7 @@ export default class extends Controller {
     fetch(`/pizza_deliveries.json${url.search}`)
       .then(response => response.json())
       .then(data => {
-        data.data.forEach(pizzaDelivery => {
+        const markers = data.data.map(pizzaDelivery => {
           let marker = new AdvancedMarkerElement({
             map: this.map,
             position: { lat: parseFloat(pizzaDelivery.latitude), lng: parseFloat(pizzaDelivery.longitude) }
@@ -68,7 +72,11 @@ export default class extends Controller {
             infoWindow.setContent(markerContent);
             infoWindow.open(marker.map, marker);
           });
-        })
+
+          return marker;
+        });
+
+        new markerClusterer.MarkerClusterer({ map: this.map, markers });
       });
   }
 }
