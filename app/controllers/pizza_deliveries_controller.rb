@@ -23,6 +23,7 @@ class PizzaDeliveriesController < ApplicationController
     @pizza_delivery = PizzaDelivery.new(permitted_params)
 
     if @pizza_delivery.save
+      PizzaDeliveryGeocoder.new(@pizza_delivery).call
       redirect_to pizza_deliveries_path
     else
       render :new
@@ -38,6 +39,7 @@ class PizzaDeliveriesController < ApplicationController
     @pizza_delivery.assign_attributes(permitted_params)
 
     if @pizza_delivery.save
+      PizzaDeliveryGeocoder.new(@pizza_delivery).call
       redirect_to pizza_deliveries_path
     else
       render :edit
