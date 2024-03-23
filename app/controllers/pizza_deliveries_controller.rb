@@ -1,7 +1,9 @@
 class PizzaDeliveriesController < ApplicationController
   def index
     @pizza_deliveries = PizzaDelivery.order(created_at: :desc).page(params[:page])
-    json_records = @pizza_deliveries.map(&:attributes)
+    json_records = @pizza_deliveries.map do |pizza_delivery|
+      PizzaDeliverySerializer.new(pizza_delivery).attributes
+    end
 
     respond_to do |format|
       format.html {}

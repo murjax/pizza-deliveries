@@ -20,10 +20,11 @@ export default class extends Controller {
   }
 
   async initIndexMap() {
-    const { Map } = await google.maps.importLibrary("maps");
+    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
     const url = new URL(window.location.href);
+    const infoWindow = new InfoWindow();
 
     this.map = new Map(this.mapTarget, {
       center: new google.maps.LatLng(39.5, -98.35),
@@ -38,6 +39,34 @@ export default class extends Controller {
           let marker = new AdvancedMarkerElement({
             map: this.map,
             position: { lat: parseFloat(pizzaDelivery.latitude), lng: parseFloat(pizzaDelivery.longitude) }
+          });
+
+          const markerContent = `
+            <div class="flex flex-col items-center">
+              <p class="uppercase font-bold text-gray-800">Location</p>
+              <p>${pizzaDelivery.formatted_location}</p>
+              <p class="uppercase font-bold text-gray-800">Submitted At</p>
+              <p>
+                ${pizzaDelivery.formatted_created_at}
+              </p>
+
+              <p class="uppercase font-bold text-gray-800">Pizza</p>
+              <p>
+                ${pizzaDelivery.pizza_description}
+              </p>
+
+              <a href="/pizza_deliveries/${pizzaDelivery.id}" class="block mt-2 font-sans text-sm antialiased font-medium leading-normal text-blue-400">
+                View
+              </a>
+            </div>
+          `;
+
+          marker.addListener("click", ({ domEvent, latLng }) => {
+            const { target } = domEvent;
+
+            infoWindow.close();
+            infoWindow.setContent(markerContent);
+            infoWindow.open(marker.map, marker);
           });
         })
       });
