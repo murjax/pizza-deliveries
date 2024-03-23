@@ -32,31 +32,12 @@
     <%= form.label "Delivery Location", class: "mb-2 uppercase font-bold text-lg text-gray-800" %>
     <div class="border border-black p-2">
       <div class="flex flex-col mb-4">
-        <%= form.label :address1, "Address 1", class: "mb-2 uppercase font-bold text-sm text-gray-800" %>
-        <%= form.text_field :address1, class: "border border-gray-400 rounded py-2 px-3 text-gray-800" %>
-      </div>
-      <div class="flex flex-col mb-4">
-        <%= form.label :address2, "Address 2", class: "mb-2 uppercase font-bold text-sm text-gray-800" %>
-        <%= form.text_field :address2, class: "border border-gray-400 rounded py-2 px-3 text-gray-800" %>
+        <%= form.label :location, required: true, class: "mb-2 uppercase font-bold text-lg text-gray-800" %>
+        <%= form.search_field :location, value: pizza_delivery.city.present? ? "#{pizza_delivery.city}, #{pizza_delivery.state}" : "", data: { "pizza-deliveries-form-target" => "searchField", action: "keydown->pizza-deliveries-form#keydown" }, class: "border border-gray-400 rounded py-2 px-3 text-gray-800" %>
       </div>
 
       <%= form.hidden_field :latitude, data: { "pizza-deliveries-form-target" => "latitude" } %>
       <%= form.hidden_field :longitude, data: { "pizza-deliveries-form-target" => "longitude" } %>
-
-      <div class="flex flex-col md:flex-row">
-        <div class="flex flex-col mb-4 mx-1 md:w-1/3">
-          <%= form.label :city, "City", class: "mb-2 uppercase font-bold text-sm text-gray-800" %>
-          <%= form.text_field :city, class: "border border-gray-400 rounded py-2 px-3 text-gray-800" %>
-        </div>
-        <div class="flex flex-col mb-4 mx-1 md:w-1/3">
-          <%= form.label :state, "State", class: "mb-2 uppercase font-bold text-sm text-gray-800" %>
-          <%= form.collection_select(:state, states_list, :id, :name, prompt: "Select a state", class: "border border-gray-400 rounded py-2 px-3 text-gray-800")  %>
-        </div>
-        <div class="flex flex-col mb-4 mx-1 md:w-1/4">
-          <%= form.label :postal_code, "Postal Code", class: "mb-2 uppercase font-bold text-sm text-gray-800" %>
-          <%= form.text_field :postal_code, class: "border border-gray-400 rounded py-2 px-3 text-gray-800" %>
-        </div>
-      </div>
     </div>
 
     <%= form.submit class: "bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded cursor-pointer" %>
