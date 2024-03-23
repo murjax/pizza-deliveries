@@ -1,7 +1,9 @@
 <h1 class="text-4xl font-bold text-center">Pizza Deliveries</h1>
 
-<div id="google-api-key" class="hidden"><%= ENV['GOOGLE_API_KEY'] %></div>
-<div data-controller="pizza-deliveries-index-map">
+<div
+  data-controller="pizza-deliveries-index-map"
+  data-pizza-deliveries-index-map-google-api-key="<%= ENV['GOOGLE_API_KEY'] %>"
+>
   <div data-pizza-deliveries-index-map-target="map" style="height:400px"></div>
 </div>
 

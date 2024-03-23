@@ -1,12 +1,6 @@
 class PizzaDeliveriesController < ApplicationController
   def index
     @pizza_deliveries = PizzaDelivery.order(created_at: :desc).page(params[:page])
-    json_records = @pizza_deliveries.map(&:attributes)
-
-    respond_to do |format|
-      format.html {}
-      format.json { render json: { data: json_records } }
-    end
   end
 
   def show
