@@ -12,14 +12,24 @@
 # Configure Using Gemfile
 # gem 'pg'
 #
-development:
+default: &default
   adapter: postgresql
   encoding: unicode
-  database: pizza_deliveries_development
   host: localhost
   pool: 5
   username: <%= ENV['POSTGRES_USER'] %>
   password: <%= ENV['POSTGRES_USER_PASS'] %>
+
+development:
+  primary:
+    <<: *default
+    database: pizza_deliveries_dev_primary
+    port: 5400
+  primary_replica:
+    <<: *default
+    database: pizza_deliveries_dev_replica
+    replica: true
+    port: 5401
 
   # Connect on a TCP socket. Omitted by default since the client uses a
   # domain socket that doesn't need configuration. Windows does not have
