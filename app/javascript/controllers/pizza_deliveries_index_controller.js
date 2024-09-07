@@ -1,29 +1,24 @@
 import { Controller } from "@hotwired/stimulus"
+import { Loader } from '@googlemaps/js-api-loader';
+import { MarkerClusterer } from '@googlemaps/markerclusterer';
 
 export default class extends Controller {
   static targets = ["map", "table"];
 
   mapTargetConnected() {
-    if (document.getElementById("google-script") === null) {
-      const markerClustererScript = document.createElement("script");
-      markerClustererScript.src = "https://unpkg.com/@googlemaps/markerclusterer/dist/index.min.js";
-      document.head.appendChild(markerClustererScript);
+    const googleApiKey = this.data.get("google-api-key");
 
-      const googleApiKey = this.data.get("google-api-key");
-      const googleScript = document.createElement("script");
-      googleScript.id = "google-script";
-      googleScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&loading=async&callback=initMap`;
-      const context = this;
-      window.initMap = function(...args) {
-        context.initIndexMap();
-      }
-      document.head.appendChild(googleScript);
-    } else {
-      this.initIndexMap();
-    }
+    const loader = new Loader({
+      apiKey: googleApiKey,
+      libraries: ['places']
+    });
+
+    loader.load().then((google) => {
+      this.initIndexMap(google);
+    });
   }
 
-  async initIndexMap() {
+  async initIndexMap(google) {
     const { Map, InfoWindow } = await google.maps.importLibrary("maps");
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
@@ -89,6 +84,6 @@ export default class extends Controller {
       markers.push(marker);
     }
 
-    new markerClusterer.MarkerClusterer({ map: this.map, markers });
+    new MarkerClusterer({ map: this.map, markers });
   }
 }

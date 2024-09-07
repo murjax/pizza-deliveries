@@ -1,4 +1,5 @@
 import { Controller } from "@hotwired/stimulus"
+import { Loader } from '@googlemaps/js-api-loader';
 
 export default class extends Controller {
   static targets = [
@@ -9,23 +10,19 @@ export default class extends Controller {
   ];
 
   mapTargetConnected() {
-    if (document.getElementById("google-script") === null) {
-      const googleApiKey = this.data.get("google-api-key");
-      const googleScript = document.createElement("script");
-      googleScript.id = "google-script";
-      googleScript.src = `https://maps.googleapis.com/maps/api/js?key=${googleApiKey}&libraries=places&loading=async&callback=initMap`;
-      const context = this;
-      window.initMap = function(...args) {
-        context.initFormMap();
-      }
+    const googleApiKey = this.data.get("google-api-key");
 
-      document.head.appendChild(googleScript);
-    } else {
-      this.initFormMap();
-    }
+    const loader = new Loader({
+      apiKey: googleApiKey,
+      libraries: ['places']
+    });
+
+    loader.load().then((google) => {
+      this.initFormMap(google);
+    });
   }
 
-  async initFormMap() {
+  async initFormMap(google) {
     const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
     this.map = new google.maps.Map(this.mapTarget, {
