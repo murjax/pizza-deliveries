@@ -12,6 +12,8 @@
   </head>
 
   <body>
+    <%= render partial: 'layouts/nav_header' %>
+
     <main class="container mx-auto mt-10 px-5">
       <% flash.each do |type, msg| %>
         <div>

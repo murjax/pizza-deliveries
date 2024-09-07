@@ -1,0 +1,17 @@
+<header>
+  <section>
+    <nav>
+      <div class="block p-2 bg-white shadow-lg">
+        <div class="flex p-2 justify-between bg-white">
+          <h3 class="text-2xl">
+            <%= link_to "Pizza Deliveries", root_path, class: "px-1 text-black" %>
+          </h3>
+          <div class="flex">
+            <%= link_to "Deliveries", pizza_deliveries_path, class: "p-2 rounded-md text-black font-medium hover:bg-slate-100" %>
+            <%= link_to "New Delivery", new_pizza_delivery_path, class: "p-2 rounded-md text-black font-medium hover:bg-slate-100" %>
+          </div>
+        </div>
+      </div>
+    </nav>
+  </section>
+</header>
