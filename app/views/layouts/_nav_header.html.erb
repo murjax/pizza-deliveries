@@ -1,6 +1,6 @@
 <header>
   <section>
-    <nav>
+    <nav data-controller="nav">
       <div class="block p-2 bg-white shadow-lg">
         <div class="flex p-2 justify-between bg-white">
           <h3 class="text-2xl">
@@ -9,6 +9,15 @@
           <div class="flex">
             <%= link_to "Deliveries", pizza_deliveries_path, class: "p-2 rounded-md text-black font-medium hover:bg-slate-100" %>
             <%= link_to "New Delivery", new_pizza_delivery_path, class: "p-2 rounded-md text-black font-medium hover:bg-slate-100" %>
+            <button
+              data-action="click->nav#openNotificationModal"
+              class="relative inline-block"
+            >
+              <span class="text-2xl text-gray-800">🔔</span>
+              <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center">
+                10
+              </span>
+            </button>
           </div>
         </div>
       </div>
