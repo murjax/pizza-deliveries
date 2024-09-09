@@ -3,6 +3,7 @@ source 'https://rubygems.org'
 ruby '3.2.1'
 
 gem 'bootsnap', require: false
+gem 'devise'
 gem 'dotenv-rails'
 gem 'geocoder'
 gem 'importmap-rails'

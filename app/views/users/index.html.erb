@@ -1,0 +1,50 @@
+<div
+  class="hidden md:flex md:flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border"
+>
+  <%= render partial: "layouts/pagination", locals: { records: @users } %>
+
+  <table
+    data-pizza-deliveries-index-target="table"
+    class="w-full text-left table-auto min-w-max"
+  >
+    <thead>
+      <tr>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Name
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Email
+          </p>
+        </th>
+        <th class="p-4 border-b border-blue-gray-100 bg-blue-gray-50">
+          <p class="block font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+            Action
+          </p>
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @users.each do |user| %>
+        <tr>
+          <td class="p-4 border-b border-blue-gray-50">
+            <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+              <%= user.name %>
+            </p>
+          </td>
+          <td class="p-4 border-b border-blue-gray-50">
+            <p class="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+              <%= user.email %>
+            </p>
+          </td>
+          <td class="p-4 border-b border-blue-gray-50">
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+
+  <%= render partial: "layouts/pagination", locals: { records: @users } %>
+</div>
