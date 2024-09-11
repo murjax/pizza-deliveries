@@ -10,5 +10,5 @@ Rails.application.routes.draw do
 
   resources :pizza_deliveries
   resources :users, only: :index
-  resources :notifications, only: :index
+  resources :notifications, only: :update
 end

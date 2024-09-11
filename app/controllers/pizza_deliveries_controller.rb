@@ -16,6 +16,7 @@ class PizzaDeliveriesController < ApplicationController
 
     if @pizza_delivery.save
       PizzaDeliveryGeocoder.new(@pizza_delivery).call
+      PizzaNotifier.new(@pizza_delivery).notify_create
       redirect_to pizza_deliveries_path
     else
       render :new

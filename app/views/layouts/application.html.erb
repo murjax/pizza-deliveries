@@ -12,8 +12,9 @@
   </head>
 
   <body>
-    <%= render partial: 'layouts/nav_header' %>
-    <%= render partial: 'layouts/notification_modal' %>
+    <% @notifications = Notification.where(user: current_user, hidden: false).order(created_at: :desc) %>
+    <%= render partial: 'layouts/nav_header', locals: { notification_count: @notifications.count } %>
+    <%= render partial: 'layouts/notification_modal', locals: { notifications: @notifications } %>
 
     <main class="container mx-auto mt-10 px-5">
       <% flash.each do |type, msg| %>
