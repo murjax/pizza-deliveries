@@ -10,3 +10,4 @@ pin "@googlemaps/markerclusterer", to: "@googlemaps--markerclusterer.js" # @2.5.
 pin "fast-deep-equal" # @3.1.3
 pin "kdbush" # @4.0.2
 pin "supercluster" # @8.0.1
+pin "@rails/actioncable", to: "@rails--actioncable.js" # @7.2.100
