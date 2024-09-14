@@ -7,10 +7,12 @@ class PizzaNotifier
 
   def notify_create
     User.find_each do |user|
-      Notification.create(
+      notification = Notification.create(
         message: "New pizza delivery created in #{pizza_delivery.city}, #{pizza_delivery.state}",
         user: user
       )
+
+      NotificationChannel.broadcast_to(user, notification)
     end
   end
 end
