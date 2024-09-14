@@ -1,6 +1,8 @@
 <div
+  data-controller="users-index"
   class="hidden md:flex md:flex-col w-full h-full overflow-scroll text-gray-700 bg-white shadow-md rounded-xl bg-clip-border"
 >
+  <%= render "message_modal" %>
   <%= render partial: "layouts/pagination", locals: { records: @users } %>
 
   <table
@@ -40,6 +42,13 @@
             </p>
           </td>
           <td class="p-4 border-b border-blue-gray-50">
+            <button
+              data-action="click->users-index#openMessageModal"
+              data-users-index-message-user-id-param="<%= user.id %>"
+              class="block font-sans text-sm antialiased font-medium leading-normal text-blue-400"
+            >
+              Send Message
+            </button>
           </td>
         </tr>
       <% end %>

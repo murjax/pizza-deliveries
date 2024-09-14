@@ -9,6 +9,8 @@ Rails.application.routes.draw do
   root 'home#index'
 
   resources :pizza_deliveries
-  resources :users, only: :index
+  resources :users, only: :index do
+    post :notifications, to: 'user_notifications#create'
+  end
   resources :notifications, only: :update
 end
