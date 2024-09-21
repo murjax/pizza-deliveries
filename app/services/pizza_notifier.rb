@@ -12,7 +12,9 @@ class PizzaNotifier
         user: user
       )
 
-      NotificationChannel.broadcast_to(user, notification)
+      NotificationRedis.redis.publish("notifications_#{user.id}", notification.attributes.to_json)
+
+      # NotificationChannel.broadcast_to(user, notification)
     end
   end
 end

@@ -5,7 +5,8 @@ class UserNotificationsController < ApplicationController
 
     if notification.save
       render json: notification.to_json
-      NotificationChannel.broadcast_to(notification.user, notification)
+      NotificationRedis.redis.publish("notifications_#{notification.user_id}", notification.attributes.to_json)
+      # NotificationChannel.broadcast_to(notification.user, notification)
     else
       render json: { errors: notification.errors.full_messages }, status: :unprocessable_entity
     end

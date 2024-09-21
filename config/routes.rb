@@ -13,4 +13,5 @@ Rails.application.routes.draw do
     post :notifications, to: 'user_notifications#create'
   end
   resources :notifications, only: :update
+  resources :sse_notifications, only: :index
 end
