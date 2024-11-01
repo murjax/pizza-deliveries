@@ -1,38 +1,56 @@
 import { Controller } from "@hotwired/stimulus"
 import { Loader } from '@googlemaps/js-api-loader';
 import { MarkerClusterer } from '@googlemaps/markerclusterer';
+import maplibregl from 'maplibre-gl';
 
 export default class extends Controller {
   static targets = ["map", "table"];
 
   mapTargetConnected() {
-    const googleApiKey = this.data.get("google-api-key");
+    this.initMap();
+  }
 
-    const loader = new Loader({
-      apiKey: googleApiKey,
-      libraries: ['places']
+  initMap() {
+    const map = new maplibregl.Map({
+      container: 'map',
+      style: 'https://demotiles.maplibre.org/style.json',
+      center: [-98.35, 39.5],
+      zoom: 3,
+      style: {
+        version: 8,
+        sources: {
+          osm: {
+            type: 'raster',
+            tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png'],
+            tileSize: 256,
+            attribution: '&copy; OpenStreetMap Contributors',
+            maxzoom: 19
+          },
+        },
+        glyphs: "https://fonts.openmaptiles.org/{fontstack}/{range}.pbf",
+        layers: [
+          {
+            id: 'osm',
+            type: 'raster',
+            source: 'osm'
+          },
+        ],
+      },
     });
 
-    loader.load().then((google) => {
-      this.initIndexMap(google);
+    const geoData = this.buildGeoData();
+
+    map.on('load', () => {
+      this.addGeoData(map, geoData);
+      this.addClusters(map);
+      this.addClusterCount(map);
+      this.addPoints(map)
     });
   }
 
-  async initIndexMap(google) {
-    const { Map, InfoWindow } = await google.maps.importLibrary("maps");
-    const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
-
-    const url = new URL(window.location.href);
-    const infoWindow = new InfoWindow();
-
-    this.map = new Map(this.mapTarget, {
-      center: new google.maps.LatLng(39.5, -98.35),
-      zoom: 4,
-      mapId: "map-id"
-    });
-
+  buildGeoData() {
     const rows = this.tableTarget.querySelector('tbody').children;
-    const markers = [];
+    const geoData = [];
 
     for (let i = 0; i < rows.length; i++) {
       const row = rows[i];
@@ -48,12 +66,7 @@ export default class extends Controller {
 
       const submittedAt = row.children[4].querySelector('p').innerHTML;
 
-      let marker = new AdvancedMarkerElement({
-        map: this.map,
-        position: { lat: parseFloat(latitude), lng: parseFloat(longitude) }
-      });
-
-      const markerContent = `
+      const popupContent = `
         <div class="flex flex-col items-center">
           <p class="uppercase font-bold text-gray-800">Location</p>
           <p>${location}</p>
@@ -73,17 +86,123 @@ export default class extends Controller {
         </div>
       `;
 
-      marker.addListener("click", ({ domEvent, latLng }) => {
-        const { target } = domEvent;
-
-        infoWindow.close();
-        infoWindow.setContent(markerContent);
-        infoWindow.open(marker.map, marker);
+      geoData.push({
+        type: "Feature",
+        geometry: {
+          type: "Point",
+          coordinates: [longitude, latitude]
+        },
+        properties: {
+          popupContent
+        }
       });
-
-      markers.push(marker);
     }
 
-    new MarkerClusterer({ map: this.map, markers });
+    return geoData;
+  }
+
+  addGeoData(map, geoData) {
+    map.addSource('delivery-data', {
+      type: "geojson",
+      data: {
+        type: "FeatureCollection",
+        features: geoData
+      },
+      cluster: true,
+      clusterMaxZoom: 14,
+      clusterRadius: 50
+    });
+  }
+
+  addClusters(map) {
+    map.addLayer({
+      id: 'clusters',
+      type: 'circle',
+      source: 'delivery-data',
+      filter: ['has', 'point_count'],
+      paint: {
+        'circle-color': [
+          'step',
+          ['get', 'point_count'],
+          '#51bbd6',
+          100,
+          '#f1f075',
+          750,
+          '#f28cb1'
+        ],
+        'circle-radius': [
+          'step',
+          ['get', 'point_count'],
+          20,
+          100,
+          30,
+          750,
+          40
+        ]
+      }
+    });
+
+    map.on('click', 'clusters', async (e) => {
+      const features = map.queryRenderedFeatures(e.point, {
+        layers: ['clusters']
+      });
+      const clusterId = features[0].properties.cluster_id;
+      const zoom = await map.getSource('delivery-data').getClusterExpansionZoom(clusterId);
+      map.easeTo({
+        center: features[0].geometry.coordinates,
+        zoom
+      });
+    });
+
+    map.on('mouseenter', 'clusters', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'clusters', () => {
+      map.getCanvas().style.cursor = '';
+    });
+  }
+
+  addClusterCount(map) {
+    map.addLayer({
+      id: 'cluster-count',
+      type: 'symbol',
+      source: 'delivery-data',
+      filter: ['has', 'point_count'],
+      layout: {
+        'text-field': '{point_count_abbreviated}',
+        'text-font': ['Open Sans Bold'],
+        'text-size': 12
+      }
+    });
+  }
+
+  addPoints(map) {
+    map.addLayer({
+      id: 'unclustered-point',
+      type: 'circle',
+      source: 'delivery-data',
+      filter: ['!', ['has', 'point_count']],
+      paint: {
+        'circle-color': '#11b4da',
+        'circle-radius': 5,
+        'circle-stroke-width': 1,
+        'circle-stroke-color': '#fff'
+      }
+    });
+
+    map.on('click', 'unclustered-point', (e) => {
+      const feature = e.features[0];
+      const coordinates = feature.geometry.coordinates.slice();
+      const popupContent = feature.properties.popupContent;
+
+      while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+      }
+
+      new maplibregl.Popup()
+        .setLngLat(coordinates)
+        .setHTML(popupContent)
+        .addTo(map);
+    });
   }
 }
