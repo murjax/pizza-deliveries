@@ -204,5 +204,12 @@ export default class extends Controller {
         .setHTML(popupContent)
         .addTo(map);
     });
+
+    map.on('mouseenter', 'unclustered-point', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'unclustered-point', () => {
+      map.getCanvas().style.cursor = '';
+    });
   }
 }
